@@ -1,0 +1,33 @@
+FROM centos
+
+RUN cd /etc/yum.repos.d/
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+RUN yum -y install python3
+RUN yum -y install wget && \ 
+yum install net-tools -y && \ 
+yum install ncurses -y && \ 
+yum install vim -y 
+
+# Copy the Linear regression script into the container's working directory
+COPY linear_regression.py /app/linear_regression.py
+COPY LogR.py /app/LogR.py
+COPY NN.py /app/NN.py
+
+# RUN dnf upgrade -y
+RUN dnf install python3-pip -y
+RUN dnf install gcc-c++ python3-devel -y
+
+# Install Python packages required for Linear regression
+RUN pip3 install numpy pandas scikit-learn keras
+RUN pip3 install tensorflow
+
+EXPOSE 50070 
+EXPOSE 9001
+
+WORKDIR /app
+
+CMD ["/bin/bash"]
+
+

@@ -1,0 +1,24 @@
+# Use the official CentOS 7 Docker image as the base image
+FROM centos:latest
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Install required dependencies
+RUN cd /etc/yum.repos.d/
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+# RUN dnf install  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y
+
+
+# Copy the Linear regression script into the container's working directory
+COPY linear_regression.py /app/linear_regression.py
+
+# Install Python packages required for Linear regression
+RUN dnf install python3-pip -y
+# RUN yum install pip3 -y
+RUN pip3 install numpy pandas scikit-learn
+
+# Run the Linear regression script when the container starts
+CMD ["/bin/bash"]
+
